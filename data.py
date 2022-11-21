@@ -34,7 +34,7 @@ from torchvision import transforms, datasets
 
 NUM_WORKER = os.cpu_count()
 
-def data_setup(train_dir: str, test_dir: str, batch_size: int, transform: transforms.Compose, num_worker=NUM_WORKER):
+def data_setup(train_dir: str, test_dir: str, batch_size: int, transform: transforms.Compose=None, num_worker=NUM_WORKER):
 
 
     train_data = datasets.ImageFolder(train_dir, transform=transform)
