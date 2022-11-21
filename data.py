@@ -25,8 +25,8 @@ def downlaod_data(source: str, destination: str, remove_source: bool=True) -> Pa
             print("Unziping data")
             zipref.extractall(image_path)
 
-    if remove_source:
-        os.remove(data_path / target_file)
+        if remove_source:
+            os.remove(data_path / target_file)
 
 
 from torch.utils.data import DataLoader
