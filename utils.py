@@ -86,9 +86,9 @@ def model_summary(model: torch.nn.Module, input_size: Tuple=(32, 3, 224, 224)):
             col_names=["input_size", "output_size", "num_params", "trainable"],
             col_width=20,
             row_settings=["var_names"])
-    
+
 from torch import nn
-def create_models(model_name: str, class_names: int) -> torch.nn.Module:
+def create_models(model_name: str, num_classes: int) -> torch.nn.Module:
     """
     This function will craete a model which is only `effnet_b0` for EfficientNet_b0 or `effnet_b2` for EfficientNet_b2.
     While Efficient models has 1000 nodes in the linear layer (last layer / classify layer), we need to reduce it to the 
@@ -96,21 +96,62 @@ def create_models(model_name: str, class_names: int) -> torch.nn.Module:
 
     Args:
         `model_name`: the model's namm we want to create.
-        `class_names`: the amount of classes that our data has (number of classes we want to predict)
+        `num_classes`: the amount of classes that our data has (number of classes we want to predict)
 
 
     Example:
-        create_models(model_name=`effnet_b0`, class_names= `3`)
+        create_models(model_name=`effnet_b0`, num_classes= `3`)
     """
     if model_name == 'effnet_b0':
         weights = torchvision.models.EfficientNet_B0_Weights.DEFAULT
         model = torchvision.models.efficientnet_b0(weights=weights).to(device)
-        model.classifier = nn.Sequential(nn.Dropout(p=0.2), nn.Linear(in_features=1280, out_features=class_names))
+        model.classifier = nn.Sequential(nn.Dropout(p=0.2), nn.Linear(in_features=1280, out_features=num_classes))
 
 
     elif model_name == "effnet_b2":
         weights = torchvision.models.EfficientNet_B2_Weights.DEFAULT
         model = torchvision.models.efficientnet_b2(weights=weights).to(device)
-        model.classifier = nn.Sequential(nn.Dropout(p=0.3), nn.Linear(in_features=1408, out_features=class_names))
+        model.classifier = nn.Sequential(nn.Dropout(p=0.3), nn.Linear(in_features=1408, out_features=num_classes))
 
     return model
+
+from torch.utils.tensorboard import SummaryWriter
+def create_writer(experiment_name: str, 
+                  model_name: str, 
+                  extra: str=None) -> torch.utils.tensorboard.writer.SummaryWriter():
+    """Creates a torch.utils.tensorboard.writer.SummaryWriter() instance saving to a specific log_dir.
+
+    log_dir is a combination of runs/timestamp/experiment_name/model_name/extra.
+
+    Where timestamp is the current date in YYYY-MM-DD format.
+
+    Args:
+        experiment_name (str): Name of experiment.
+        model_name (str): Name of model.
+        extra (str, optional): Anything extra to add to the directory. Defaults to None.
+
+    Returns:
+        torch.utils.tensorboard.writer.SummaryWriter(): Instance of a writer saving to log_dir.
+
+    Example usage:
+        # Create a writer saving to "runs/2022-06-04/data_10_percent/effnetb2/5_epochs/"
+        writer = create_writer(experiment_name="data_10_percent",
+                               model_name="effnetb2",
+                               extra="5_epochs")
+        # The above is the same as:
+        writer = SummaryWriter(log_dir="runs/2022-06-04/data_10_percent/effnetb2/5_epochs/")
+    """
+    from datetime import datetime
+    import os
+
+    # Get timestamp of current date (all experiments on certain day live in same folder)
+    timestamp = datetime.now().strftime("%Y-%m-%d") # returns current date in YYYY-MM-DD format
+
+    if extra:
+        # Create log directory path
+        log_dir = os.path.join("runs", timestamp, experiment_name, model_name, extra)
+    else:
+        log_dir = os.path.join("runs", timestamp, experiment_name, model_name)
+        
+    print(f"[INFO] Created SummaryWriter, saving to: {log_dir}...")
+    return SummaryWriter(log_dir=log_dir)
