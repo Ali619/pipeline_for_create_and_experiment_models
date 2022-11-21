@@ -27,7 +27,7 @@ def downlaod_data(source: str, destination: str, remove_source: bool=True) -> Pa
 
         if remove_source:
             os.remove(data_path / target_file)
-    return image_path
+    return image_path.absolute()
 
 from torch.utils.data import DataLoader
 from torchvision import transforms, datasets
