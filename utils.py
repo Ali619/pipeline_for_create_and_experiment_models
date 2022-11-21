@@ -44,8 +44,19 @@ def plot_random_image(model: torch,
         image_label = torch.argmax(image_prob, dim=1)
 
         print(class_names, image_prob, image_label)
-        # plt.figure()
-        # plt.imshow(img)
-        # plt.title(f"It's {class_names[image_label]}, Prob: {image_prob.max()*100}")
-        # plt.axis(False)
-        # plt.show()
+        plt.figure()
+        plt.imshow(img)
+        plt.title(f"It's {class_names[image_label]}, Prob: {image_prob.max()*100:.2f}")
+        plt.axis(False)
+        plt.show()
+
+
+from torchinfo import summary
+def model_summary(model: torch.nn.Module, input_size: Tuple=(32, 3, 224, 224)):
+
+    return summary(model=model, 
+            input_size=(32, 3, 224, 224), # make sure this is "input_size", not "input_shape"
+            col_names=["input_size", "output_size", "num_params", "trainable"],
+            col_width=20,
+            row_settings=["var_names"])
+    
