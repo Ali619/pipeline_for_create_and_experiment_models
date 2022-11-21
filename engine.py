@@ -4,8 +4,8 @@ from torch.utils.tensorboard import SummaryWriter
 from tqdm.auto import tqdm
 from typing import Dict, List, Tuple
 
-def train_step(model: torch.Module,
-                train_dataloader: torch.utils.data.Dataloader,
+def train_step(model: torch.nn.Module,
+                train_dataloader: torch.utils.data.DataLoader,
                 optimizer: torch.optim.Optimizer,
                 loss_fn: torch.nn.Module,
                 device: torch.device):
@@ -39,8 +39,8 @@ def train_step(model: torch.Module,
     return train_loss, train_acc
 
 
-def test_step(model: torch.Module,
-            test_dataloader: torch.utils.data.Dataloader,
+def test_step(model: torch.nn.Module,
+            test_dataloader:torch.utils.data.DataLoader,
             loss_fn: torch.nn.Module,
             device: torch.device):
 
@@ -66,16 +66,14 @@ def test_step(model: torch.Module,
 
         return test_loss, test_acc
 
-writer = SummaryWriter()        
-
-def train(model: torch.Module,
-            train_dataloader: torch.utils.data.Dataloader,
-            test_dataloader: torch.utils.data.Dataloader,
+def train(model: torch.nn.Module,
+            train_dataloader:torch.utils.data.DataLoader,
+            test_dataloader:torch.utils.data.DataLoader,
             loss_fn: torch.nn.Module,
             optimizer: torch.optim.Optimizer,
             device: torch.device,
             epochs: int,
-            writer: torch.utils.tensorboard.SummaryWriter=writer) -> Dict[str: List]:
+            writer: torch.utils.tensorboard.SummaryWriter) -> Dict[str: List]:
     
         results = {
                 "train_loss": [],
