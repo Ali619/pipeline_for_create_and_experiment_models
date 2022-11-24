@@ -4,11 +4,13 @@ from torch.utils.tensorboard import SummaryWriter
 from tqdm.auto import tqdm
 from typing import Dict, List, Tuple
 
+device = 'cuda' if torch.cuda.is_available() else 'cpu'
+
 def train_step(model: torch.nn.Module,
                 train_dataloader: torch.utils.data.DataLoader,
                 optimizer: torch.optim.Optimizer,
                 loss_fn: torch.nn.Module,
-                device: torch.device):
+                device: torch.device=device):
 
     model = model.to(device)
     model.train()
@@ -42,12 +44,12 @@ def train_step(model: torch.nn.Module,
 def test_step(model: torch.nn.Module,
             test_dataloader:torch.utils.data.DataLoader,
             loss_fn: torch.nn.Module,
-            device: torch.device):
+            device: torch.device=device):
 
     test_loss, test_acc = 0, 0
+    model = model.to(device)
     for X, y in test_dataloader:
         
-        model = model.to(device)
         X, y =  X.to(device), y.to(device)
 
         model.eval()
@@ -71,7 +73,7 @@ def train(model: torch.nn.Module,
             test_dataloader:torch.utils.data.DataLoader,
             loss_fn: torch.nn.Module,
             optimizer: torch.optim.Optimizer,
-            device: torch.device,
+            device: torch.device=device,
             epochs: int,
             writer: torch.utils.tensorboard.SummaryWriter):
     
