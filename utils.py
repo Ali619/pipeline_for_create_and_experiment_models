@@ -113,6 +113,8 @@ def create_models(model_name: str, num_classes: int) -> torch.nn.Module:
         model = torchvision.models.efficientnet_b2(weights=weights).to(device)
         model.classifier = nn.Sequential(nn.Dropout(p=0.3), nn.Linear(in_features=1408, out_features=num_classes))
 
+    for param in model.features.parameters():
+        param.requires_grad = False
     return model
 
 from torch.utils.tensorboard import SummaryWriter
@@ -153,7 +155,6 @@ def create_writer(experiment_name: str,
     else:
         log_dir = os.path.join("runs", timestamp, experiment_name, model_name)
         
-    print(f"[INFO] Created SummaryWriter, saving to: {log_dir}...")
     return SummaryWriter(log_dir=log_dir)
 
 
