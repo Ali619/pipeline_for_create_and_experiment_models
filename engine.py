@@ -73,9 +73,9 @@ def train(model: torch.nn.Module,
             test_dataloader:torch.utils.data.DataLoader,
             loss_fn: torch.nn.Module,
             optimizer: torch.optim.Optimizer,
-            device: torch.device=device,
             epochs: int,
-            writer: torch.utils.tensorboard.SummaryWriter):
+            writer: torch.utils.tensorboard.SummaryWriter,
+            device: torch.device=device):
     
         results = {
                 "train_loss": [],
