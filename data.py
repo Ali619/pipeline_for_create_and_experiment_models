@@ -36,9 +36,21 @@ NUM_WORKER = os.cpu_count()
 
 def data_setup(train_dir: str, test_dir: str, batch_size: int, transform: transforms.Compose=None, num_worker=NUM_WORKER):
 
+    if transform:
+        img_transform = transform
 
-    train_data = datasets.ImageFolder(train_dir, transform=transform)
-    test_data = datasets.ImageFolder(test_dir, transform=transform)
+    else:
+        img_transform = transforms.Compose([
+                                        transforms.Resize((224, 224)),
+                                        transforms.ToTensor(),
+                                        transforms.Normalize(mean=[0.485, 0.456, 0.406],
+                                                                std=[0.229, 0.224, 0.225])
+                                    ])
+
+
+    # Loading data with the label. This dataloader will use folder name as label
+    train_data = datasets.ImageFolder(train_dir, transform=img_transform)
+    test_data = datasets.ImageFolder(test_dir, transform=img_transform)
 
     class_names = train_data.classes
 
