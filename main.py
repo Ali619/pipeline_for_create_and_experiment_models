@@ -32,14 +32,9 @@ train_dataloader_20_percent, test_dataloader_20_percent, class_names = data_setu
                                                                                     batch_size=BATCH_SIZE,
                                                                                     num_worker=os.cpu_count())
 
-# We need to change the classifier output layer while we only have 3 class to predict (not 1000)
-# We will do this in create_models functions
-effnet_b0 = create_models(model_name='effnet_b0', num_classes=class_names)
-effnet_b2 = create_models(model_name='effnet_b2', num_classes=class_names)
-
 # Creating parameters to test 2 models with diffrent hyperparameters
 num_epochs = [5, 10]
-models = [effnet_b0, effnet_b2]
+models = ['effnet_b0', 'effnet_b2']
 train_dataloaders = {"data_10_percent": [train_dataloader_10_percent],
                     "data_20_percent": [train_dataloader_20_percent]}
 
@@ -55,24 +50,26 @@ for train_data_name, train_data in train_dataloaders.items():
                     f"model_name is: {model_name}",
                     f"epoch number is: {epochs}")
 
-            # Creating loss function and optimizer
+            # Creating model, loss function and optimizer for each experiment
+            model = create_models(model_name=model_name, num_classes=len(class_names))
             loss_fn = nn.CrossEntropyLoss()
-            optimizer = torch.optim.Adam(params=model_name.parameters(), lr=0.001)
+            optimizer = torch.optim.Adam(params=model.parameters(), lr=0.001)
 
-            result = train(model=model_name,
-                            train_dataloader=train_data,
+            result = train(model=model,
+                            train_dataloader=train_data[0],
                             test_dataloader=test_dataloader_20_percent,
                             loss_fn=loss_fn,
                             optimizer=optimizer,
                             device=device,
                             epochs=epochs,
                             writer=create_writer(experiment_name=train_data_name,
-                                                    model_name=model_name,
-                                                    extra=f"{epochs}_epochs"))
+                                    model_name=model_name,
+                                    extra=f"{epochs}_epochs")
+                            )
 
             save_filepath = f"07_{model_name}_{train_data_name}_{epochs}_epochs.pth"
 
-            save_model(model=model_name,
+            save_model(model=model,
                        target_dir="models",
                        model_name=save_filepath)
 
