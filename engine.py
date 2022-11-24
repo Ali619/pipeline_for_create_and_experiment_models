@@ -104,9 +104,9 @@ def train(model: torch.nn.Module,
 
             print(f"Epoch {epoch+1} from {epochs}:\n------------")
             print(f"Train Loss: {train_loss:.3f} | "
-                    "Train Acc: %{train_acc:.2f} | "
-                    "Test Loss: {test_loss:.3f} | "
-                    "Test Acc: %{test_acc:.2f}")
+                  f"Train Acc: %{train_acc:.2f} | "
+                  f"Test Loss: {test_loss:.3f} | "
+                  f"Test Acc: %{test_acc:.2f}")
 
             if writer:
                 writer.add_scalar(tag="train_loss",
@@ -122,6 +122,6 @@ def train(model: torch.nn.Module,
                 writer.add_scalar(tag="test_accuracy",
                                     scalar_value=test_acc,
                                     global_step=epoch)
-                                    
+
                 writer.close()
         return results
