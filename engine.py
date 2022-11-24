@@ -109,14 +109,19 @@ def train(model: torch.nn.Module,
                     "Test Acc: %{test_acc:.2f}")
 
             if writer:
-                writer.add_scaler(main_tag="Loss",
-                                    tag_scaler_dict={"train_loss": train_loss,
-                                                        "test_loss": test_loss},
+                writer.add_scalar(tag="train_loss",
+                                    scalar_value=train_loss,
+                                    global_step=epoch)
+                writer.add_scalar(tag="test_loss",
+                                    scalar_value=test_loss,
                                     global_step=epoch)
 
-                writer.add_scaler(main_tag="Accuracy",
-                                    tag_scaler_dict={"train_acc": train_acc,
-                                                        "test_acc": test_acc},
+                writer.add_scalar(tag="train_accuracy",
+                                    scalar_value=train_acc,
                                     global_step=epoch)
+                writer.add_scalar(tag="test_accuracy",
+                                    scalar_value=test_acc,
+                                    global_step=epoch)
+                                    
                 writer.close()
         return results
