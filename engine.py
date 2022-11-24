@@ -51,7 +51,7 @@ def test_step(model: torch.nn.Module,
         X, y =  X.to(device), y.to(device)
 
         model.eval()
-        with torch.inference_mode:
+        with torch.inference_mode():
             
             y_pred = model(X)
 
@@ -73,7 +73,7 @@ def train(model: torch.nn.Module,
             optimizer: torch.optim.Optimizer,
             device: torch.device,
             epochs: int,
-            writer: torch.utils.tensorboard.SummaryWriter) -> Dict[str: List]:
+            writer: torch.utils.tensorboard.SummaryWriter):
     
         results = {
                 "train_loss": [],
