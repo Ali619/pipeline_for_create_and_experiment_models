@@ -39,7 +39,7 @@ def data_setup(train_dir: str, test_dir: str, batch_size: int, transform: transf
     if transform:
         img_transform = transform
 
-    else:
+    elif not transform:
         img_transform = transforms.Compose([
                                         transforms.Resize((224, 224)),
                                         transforms.ToTensor(),
