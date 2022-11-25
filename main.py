@@ -8,10 +8,10 @@ from data import downlaod_data, data_setup
 import os
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
-data_10_precent = downlaod_data(source='https://github.com/mrdbourke/pytorch-deep-learning/raw/46a8b2988295e135e39d3320b4dcf95fe2ef3927/data/pizza_steak_sushi.zip',
+data_10_precent = downlaod_data(source='https://github.com/Ali619/pipeline_for_create_and_experiment_models/raw/master/data/pizza_steak_sushi_10_percent.zip',
             destination='10_percent_food_pics')
 
-data_20_precent = downlaod_data(source='https://github.com/mrdbourke/pytorch-deep-learning/raw/main/data/pizza_steak_sushi_20_percent.zip',
+data_20_precent = downlaod_data(source='https://github.com/Ali619/pipeline_for_create_and_experiment_models/raw/master/data/pizza_steak_sushi_20_percent.zip',
             destination='20_percent_food_pics')
 
 train_dir_10percent = data_10_precent / 'train'
@@ -35,20 +35,20 @@ train_dataloader_20_percent, test_dataloader_20_percent, class_names = data_setu
 # Creating parameters to test 2 models with diffrent hyperparameters
 num_epochs = [5, 10]
 models = ['effnet_b0', 'effnet_b2']
-train_dataloaders = {"data_10_percent": [train_dataloader_10_percent],
-                    "data_20_percent": [train_dataloader_20_percent]}
+train_dataloaders = {"data_10_percent": train_dataloader_10_percent,
+                    "data_20_percent": train_dataloader_20_percent}
 
 # Starting loop for training 
 experiment_num = 1
 
 for train_data_name, train_data in train_dataloaders.items():
-    for model_name in models:
-        for epochs in num_epochs:
-            
-            print(f"Experiment number is: {experiment_num}",
-                    f"train_data is: {train_data_name}",
-                    f"model_name is: {model_name}",
-                    f"epoch number is: {epochs}")
+    for epochs in num_epochs:
+      for model_name in models:           
+        
+            print(f"\nExperiment number: {experiment_num} |",
+                    f"train_data: {train_data_name}",
+                    f"\nmodel_name: {model_name} |",
+                    f"epoch number: {epochs}\n")
 
             # Creating model, loss function and optimizer for each experiment
             model = create_models(model_name=model_name, num_classes=len(class_names))
@@ -56,8 +56,8 @@ for train_data_name, train_data in train_dataloaders.items():
             optimizer = torch.optim.Adam(params=model.parameters(), lr=0.001)
 
             result = train(model=model,
-                            train_dataloader=train_data[0],
-                            test_dataloader=test_dataloader_20_percent,
+                            train_dataloader=train_data,
+                            test_dataloader=test_dataloader_10_percent,
                             loss_fn=loss_fn,
                             optimizer=optimizer,
                             device=device,
@@ -67,7 +67,7 @@ for train_data_name, train_data in train_dataloaders.items():
                                     extra=f"{epochs}_epochs")
                             )
 
-            save_filepath = f"07_{model_name}_{train_data_name}_{epochs}_epochs.pth"
+            save_filepath = f"{model_name}_{train_data_name}_{epochs}_epochs.pth"
 
             save_model(model=model,
                        target_dir="models",
