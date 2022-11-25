@@ -46,22 +46,22 @@ def test_step(model: torch.nn.Module,
             loss_fn: torch.nn.Module,
             device: torch.device=device):
 
+    model.eval()
     test_loss, test_acc = 0, 0
     model = model.to(device)
-    for X, y in test_dataloader:
-        
-        X, y =  X.to(device), y.to(device)
+    with torch.inference_mode():
 
-        model.eval()
-        with torch.inference_mode():
+        for batch, (X, y) in enumerate(test_dataloader):
+            
+            X, y =  X.to(device), y.to(device)
             
             y_pred = model(X)
 
             loss = loss_fn(y_pred, y)
             test_loss += loss.item()
 
-            y_pred_class = torch.argmax(torch.softmax(y_pred, dim=1), dim=1)
-            test_acc += (y_pred_class == y).sum().item() / len(y_pred)
+            y_pred_class = torch.argmax(y_pred, dim=1)
+            test_acc += ((y_pred_class == y).sum().item() / len(y_pred_class))
         
         test_loss = test_loss / len(test_dataloader)
         test_acc = test_acc / len(test_dataloader)
